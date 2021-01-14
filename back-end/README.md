@@ -1,4 +1,4 @@
-#Project setup:
+Project setup:
 	clone the project
 	import maven project in intelij/eclipse
 	install https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
