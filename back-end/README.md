@@ -1,5 +1,5 @@
 Project setup:
-	clone
+	clone the project
 	import maven project in intelij/eclipse
 	install https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
 		*im using 13.1
