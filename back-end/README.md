@@ -1,11 +1,11 @@
-Project setup:
+#Project setup:
 	clone the project
 	import maven project in intelij/eclipse
 	install https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
 		*im using 13.1
 	go in pgAdmin4 create database lunchapp
 	rightclick the database and open QueryTool
-	write and execute this:
+write and execute this:
 
 DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users(
