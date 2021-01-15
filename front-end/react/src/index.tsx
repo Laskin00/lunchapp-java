@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./app/App";
 import reportWebVitals from "./reportWebVitals";
 import "fontsource-roboto/latin.css";
+import "./setup/axios";
 
 ReactDOM.render(
   <React.StrictMode>
