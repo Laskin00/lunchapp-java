@@ -5,12 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -22,6 +17,7 @@ import com.al.lunchapp.repositories.MeetingUserConnectionRepository;
 import com.al.lunchapp.repositories.UserRepository;
 
 @RestController
+@CrossOrigin(origins = "localhost:3000")
 @RequestMapping("/user")
 public class UserController {
 	//TODO add automated getting of meetings of user
@@ -35,17 +31,37 @@ public class UserController {
 	
 	@PostMapping("/register")
 	private String register(@RequestBody User newUser) {
+		if(!checkUser(newUser).equals("")){
+			return checkUser(newUser);
+		}
 		if(userRepository.findByEmail(newUser.getEmail()) != null){
 			return HelperService.toJson("error", "Email already in use.");
 		}
 		try{
 			newUser.setPassword(encoder.encode(newUser.getPassword()));
 			userRepository.save(newUser);
-			return HelperService.toJson("message","Register successfull!");
+			return HelperService.toJson("message","Register successful!");
 		}catch(DataIntegrityViolationException e){
 			return HelperService.toJson("error", e.getMessage());
 		}
+	}
 
+	private String checkUser(User user){
+		String message = "";
+		if(user.getFirstName() == ""){
+			message = "First Name must not be empty.";
+		}else if(user.getLastName() == ""){
+			message = "Last Name must not be empty.";
+		}else if(user.getEmail() == ""){
+			message = "Email must not be empty.";
+		}else if(user.getPassword() == ""){
+			message = "Password must not be empty.";
+		}
+		if(message.equals("")){
+			return "";
+		}else{
+			return HelperService.toJson("error",message);
+		}
 	}
 	
 	@GetMapping("/{uuid}")
@@ -54,7 +70,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/login")
-	private String loginAndReturnSessionToken(@RequestBody ObjectNode emailAndPasswordInJson) {
+	private User login(@RequestBody ObjectNode emailAndPasswordInJson) {
 		String email = emailAndPasswordInJson.get("email").asText();
 		String password = emailAndPasswordInJson.get("password").asText();
 		User user;
@@ -63,9 +79,9 @@ public class UserController {
 			 String newSessionToken = HelperService.generateNewToken();
 			 user.setSessionToken(newSessionToken);
 			 userRepository.save(user);
-			 return HelperService.toJson("sessionToken",newSessionToken);
+			 return user;
 		}catch(UserAuthenticationException e){
-			return HelperService.toJson("error", e.getMessage());
+			return null;
 		}
 	}
 

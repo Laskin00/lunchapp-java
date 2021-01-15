@@ -19,6 +19,7 @@ import com.al.lunchapp.repositories.MeetingUserConnectionRepository;
 import com.al.lunchapp.repositories.UserRepository;
 
 @RestController
+@CrossOrigin(origins = "localhost:3000")
 @RequestMapping("/meeting")
 public class MeetingController {
 	//TODO add  generation of meeting with random users
