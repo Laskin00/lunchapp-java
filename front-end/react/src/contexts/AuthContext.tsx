@@ -62,11 +62,12 @@ export class AuthContextProvider extends Component<{}, State> {
   };
 
   render() {
-    return null;
-    // return (
-    //   <AuthContext.Provider value={this.state}>
-    //     {this.props.children}
-    //   </AuthContext.Provider>
-    // );
+    return (
+      <AuthContext.Provider value={this.state}>
+        {this.props.children}
+      </AuthContext.Provider>
+    );
   }
 }
+
+export { AuthContext };
