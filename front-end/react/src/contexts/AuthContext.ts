@@ -35,6 +35,10 @@ export class AuthContextProvider extends Component<{}, State> {
     }
   };
 
+  signUp = async (data: ISignUpData) => {};
+
+  signOut = async () => {};
+
   getMe = async () => {
     try {
       this.setState({ isLoading: true });
@@ -58,10 +62,11 @@ export class AuthContextProvider extends Component<{}, State> {
   };
 
   render() {
-    return (
-      <AuthContext.Provider value={this.state}>
-        {this.props.children}
-      </AuthContext.Provider>
-    );
+    return null;
+    // return (
+    //   <AuthContext.Provider value={this.state}>
+    //     {this.props.children}
+    //   </AuthContext.Provider>
+    // );
   }
 }
