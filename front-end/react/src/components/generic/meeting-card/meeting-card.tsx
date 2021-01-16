@@ -3,7 +3,6 @@ import {
   Avatar,
   Box,
   Card,
-  CardActions,
   CardContent,
   CardHeader,
   Collapse,
@@ -21,7 +20,7 @@ import EventIcon from '@material-ui/icons/Event';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { grey, red } from '@material-ui/core/colors';
+import { red } from '@material-ui/core/colors';
 
 interface IMeetingCardProps {
   meeting: IMeeting;
@@ -30,6 +29,9 @@ interface IMeetingCardProps {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     card: {
+      '&:first-child': {
+        marginTop: theme.spacing(2),
+      },
       marginTop: theme.spacing(6),
       boxShadow: theme.shadows[3],
       maxWidth: theme.breakpoints.width('md'),
