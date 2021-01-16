@@ -1,11 +1,11 @@
-import React, { ReactNode } from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { Container } from "@material-ui/core";
+import React, { ReactNode } from 'react';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { Container } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      padding: "2rem",
+      padding: '2rem',
     },
   })
 );
@@ -18,7 +18,7 @@ export const Body = ({ children }: IProps) => {
   const classes = useStyles();
 
   return (
-    <Container maxWidth="md" className={classes.container}>
+    <Container maxWidth='md' className={classes.container}>
       <>{children}</>
     </Container>
   );

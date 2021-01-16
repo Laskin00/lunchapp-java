@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      background: theme.palette.common.white,
+      background: theme.palette.background.paper,
       padding: '1rem 2rem',
       borderRadius: '10px',
       boxShadow: theme.shadows[5],
@@ -72,15 +72,20 @@ export const SignIn = () => {
             password: '',
           }}
           onSubmit={async (values, actions) => {
-            console.log(values);
-
             const res = await api.signIn(values);
 
-            console.log(res);
+            res.id && setSessionCookie(res.id);
 
-            setSessionCookie(res.id);
+            if (res.sessionToken) {
+              setMessage('Sign in successful!');
+            } else {
+              setError('Sign in failed!');
+            }
 
+            setOpen(true);
             actions.setSubmitting(false);
+
+            window.location.reload();
           }}
         >
           {({ handleChange, isSubmitting }) => (

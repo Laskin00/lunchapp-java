@@ -26,6 +26,10 @@ export interface ISignUpData {
   password: string;
 }
 
+export interface ISignOutData {
+  sessionToken: string;
+}
+
 export interface SuccessResponse {
   success: boolean;
 }
@@ -34,7 +38,6 @@ const userUuid = getSessionCookie();
 
 export const signIn = async (data: ISignInData): Promise<IUser> => {
   const response = await axios.post('/user/login', data);
-  console.log(response);
 
   return response.data;
 };
@@ -47,15 +50,12 @@ export const signUp = async (data: ISignUpData): Promise<ISignUpResponse> => {
 };
 
 export const signOut = async (
-  sessionToken: string
+  sessionToken: ISignOutData
 ): Promise<SuccessResponse> => {
+  console.log(sessionToken);
   const response = await axios.post('/user/logout', sessionToken);
 
-  return response.data;
-};
-
-export const getMe = async (): Promise<IUser> => {
-  const response = await axios.get('/user/get');
+  console.log(response);
 
   return response.data;
 };

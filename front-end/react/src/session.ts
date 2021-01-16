@@ -1,16 +1,27 @@
 import * as Cookies from 'js-cookie';
 
-export const setSessionCookie = (data: string): void => {
+export const setSessionCookie = (data: string) => {
   Cookies.remove('session');
   Cookies.set('session', data, { expires: 14 });
 };
 
-export const getSessionCookie: any = () => {
+export const getSessionCookie = () => {
   const sessionCookie = Cookies.get('session');
 
-  if (sessionCookie === undefined) {
-    return {};
-  } else {
-    return JSON.parse(sessionCookie);
+  if (sessionCookie) {
+    return sessionCookie;
   }
+
+  return null;
+};
+
+export const getDarkModePreference = () => {
+  const darkMode = Cookies.get('darkMode');
+
+  return darkMode === 'true';
+};
+
+export const toggleDarkMode = (darkMode: boolean) => {
+  Cookies.remove('darkMode');
+  Cookies.set('darkMode', (!darkMode).toString(), { expires: 14 });
 };
