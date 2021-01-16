@@ -1,3 +1,6 @@
 export interface IMeeting {
-  title: string;
+  description: string;
+  location: string;
+  date: string;
+  time: string;
 }

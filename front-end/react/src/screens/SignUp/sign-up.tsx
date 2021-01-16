@@ -77,15 +77,11 @@ export const SignUp = () => {
             password: '',
           }}
           onSubmit={async (values, actions) => {
-            console.log(values);
-
-            const res = await api.signUp(values);
-
-            console.log(res);
+            const response = await api.signUp(values);
 
             setOpen(true);
-            setError(res.error);
-            setMessage(res.message);
+            setError(response.error);
+            setMessage(response.message);
 
             actions.setSubmitting(false);
           }}

@@ -58,7 +58,6 @@ export const SignIn = () => {
 
   return (
     <Container component='main' maxWidth='sm'>
-      <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
@@ -77,15 +76,13 @@ export const SignIn = () => {
             res.id && setSessionCookie(res.id);
 
             if (res.sessionToken) {
-              setMessage('Sign in successful!');
+              window.location.reload();
             } else {
-              setError('Sign in failed!');
+              setError('Sign in failed.');
+              setOpen(true);
             }
 
-            setOpen(true);
             actions.setSubmitting(false);
-
-            window.location.reload();
           }}
         >
           {({ handleChange, isSubmitting }) => (

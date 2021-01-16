@@ -44,7 +44,6 @@ export const signIn = async (data: ISignInData): Promise<IUser> => {
 
 export const signUp = async (data: ISignUpData): Promise<ISignUpResponse> => {
   const response = await axios.post('/user/register', data);
-  console.log(response);
 
   return response.data;
 };
@@ -52,10 +51,7 @@ export const signUp = async (data: ISignUpData): Promise<ISignUpResponse> => {
 export const signOut = async (
   sessionToken: ISignOutData
 ): Promise<SuccessResponse> => {
-  console.log(sessionToken);
   const response = await axios.post('/user/logout', sessionToken);
-
-  console.log(response);
 
   return response.data;
 };

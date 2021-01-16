@@ -75,12 +75,8 @@ export const NavBar = () => {
 
   const handleLogout = async () => {
     if (user?.sessionToken) {
-      const res = await api.signOut({ sessionToken: user?.sessionToken });
-
-      console.log(res);
-
+      await api.signOut({ sessionToken: user?.sessionToken });
       Cookies.remove('session');
-
       window.location.reload();
     }
   };
