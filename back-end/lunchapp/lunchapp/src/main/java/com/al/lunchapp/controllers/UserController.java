@@ -111,10 +111,13 @@ public class UserController {
 	
 	private User authenticateAndReturnUser(String email, String password) {
 		User user = userRepository.findByEmail(email);
+		if (user == null){
+			throw new UserAuthenticationException("Wrong email or password.");
+		}
 		if(encoder.matches(password, user.getPassword())) {
 			return user;
 		}else {
-			throw new UserAuthenticationException("Wrong email or password !");
+			throw new UserAuthenticationException("Wrong email or password.");
 		}
 	}
 	
