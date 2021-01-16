@@ -1,23 +1,20 @@
-import React from "react";
-import { createBrowserHistory } from "history";
-import { Router } from "react-router";
-import RootRoutes from "./RootRoutes";
-import { NavBar } from "../components/layout/navbar/navbar";
-import { Body } from "../components/layout/body/body";
-import { AuthContextProvider } from "../contexts/AuthContext";
+import React from 'react';
+import { createBrowserHistory } from 'history';
+import { Router } from 'react-router';
+import RootRoutes from './RootRoutes';
+import { NavBar } from '../components/layout/navbar/navbar';
+import { Body } from '../components/layout/body/body';
 
 const history = createBrowserHistory();
 
 const App = () => {
   return (
     <Router history={history}>
-      <AuthContextProvider>
-        <NavBar />
+      <NavBar />
 
-        <Body>
-          <RootRoutes />
-        </Body>
-      </AuthContextProvider>
+      <Body>
+        <RootRoutes />
+      </Body>
     </Router>
   );
 };
