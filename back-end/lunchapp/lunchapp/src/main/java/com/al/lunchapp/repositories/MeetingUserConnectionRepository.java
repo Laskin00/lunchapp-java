@@ -28,6 +28,9 @@ public interface MeetingUserConnectionRepository extends JpaRepository<MeetingUs
 	@Query("SELECT muc FROM MeetingUserConnection muc WHERE muc.meeting = ?1 AND muc.user = ?2")
 	MeetingUserConnection getMeetingUserConnectionByMeetingAndUser(Meeting meeting, User user);
 
+	@Query("SELECT muc.user FROM MeetingUserConnection muc WHERE muc.meeting = ?1 AND muc.isOwner = true")
+	User getMeetingOwner(Meeting meeting);
+
 	@Transactional
 	@Modifying
 	@Query("DELETE FROM MeetingUserConnection muc WHERE muc.meeting = ?1 AND muc.user = ?2")
