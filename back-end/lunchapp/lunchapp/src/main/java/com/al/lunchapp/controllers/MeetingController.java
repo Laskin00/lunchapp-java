@@ -64,6 +64,11 @@ public class MeetingController {
 		}
 	}
 
+	@GetMapping("/owner/{uuid}")
+	private User getOwner(@PathVariable String uuid){
+		Meeting meeting = meetingRepository.findByUuid(uuid);
+		return meetingUserConnectionRepository.getMeetingOwner(meeting);
+	}
 	@DeleteMapping("/delete/{uuid}")
 	private String deleteMeeting(@RequestBody String sessionToken,@PathVariable String uuid){
 		User user = UserController.getUserBySessionTokenInJson(userRepository,sessionToken);
