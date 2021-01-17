@@ -6,6 +6,7 @@ import {
   IconButton,
   makeStyles,
   Modal,
+  TextField,
   Theme,
   Typography,
 } from '@material-ui/core';
@@ -35,26 +36,32 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     wrapper: {
       display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       outline: 'none',
-      padding: theme.spacing(4),
       width: theme.breakpoints.width('md'),
-
+      borderRadius: '8px',
+      backgroundColor: theme.palette.background.paper,
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(6, 8),
+      margin: theme.spacing(2),
+    },
+    paperContainer: {
       [theme.breakpoints.down('sm')]: {
         flexDirection: 'column',
       },
     },
     paper: {
       width: '50%',
+      height: '100%',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       padding: theme.spacing(2, 4, 3),
-      backgroundColor: theme.palette.background.paper,
-      boxShadow: theme.shadows[5],
-      borderRadius: '8px',
+      border: `1px solid ${theme.palette.text.disabled}`,
+      borderRadius: '5px',
       '&:last-child': {
         marginLeft: '2rem',
       },
@@ -70,6 +77,20 @@ const useStyles = makeStyles((theme: Theme) =>
     content: {
       margin: theme.spacing(2, 0),
       color: theme.palette.text.secondary,
+    },
+    title: {
+      fontSize: '2rem',
+      fontWeight: 900,
+      letterSpacing: '1.5px',
+      textTransform: 'uppercase',
+      color: theme.palette.primary.main,
+      marginBottom: theme.spacing(6),
+    },
+    gridItem: {
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
   })
 );
@@ -134,47 +155,71 @@ export const HomePage = () => {
       >
         <Fade in={open}>
           <div className={classes.wrapper}>
-            <Box className={classes.paper}>
-              <Typography variant='h5'>CREATE</Typography>
+            <Typography variant='h4' className={classes.title}>
+              Another meeting?
+            </Typography>
 
-              <Typography variant='body1' className={classes.content}>
-                Create your own meeting.
-              </Typography>
+            <Box display='flex' width='100%' className={classes.paperContainer}>
+              <Box className={classes.paper}>
+                <Typography variant='h5'>CREATE</Typography>
 
-              <Button
-                variant='contained'
-                color='secondary'
-                disableElevation
-                fullWidth
-                size='large'
-              >
-                Create a meeting
-              </Button>
-            </Box>
-            <Box className={classes.paper}>
-              <Typography variant='h5'>JOIN</Typography>
+                <Typography variant='body1' className={classes.content}>
+                  Create your own meeting.
+                </Typography>
 
-              <Typography variant='body1' className={classes.content}>
-                Join a meeting using a special invite link.
-              </Typography>
+                <Button
+                  variant='contained'
+                  color='secondary'
+                  disableElevation
+                  fullWidth
+                  size='large'
+                >
+                  Create a meeting
+                </Button>
+              </Box>
+              <Grid container spacing={2} className={classes.paper}>
+                <Grid item xs={12} className={classes.gridItem}>
+                  <Typography variant='h5'>JOIN</Typography>
+                </Grid>
 
-              <Button
-                variant='contained'
-                color='primary'
-                disableElevation
-                fullWidth
-                size='large'
-              >
-                Join a meeting
-              </Button>
+                <Grid item xs={12} className={classes.gridItem}>
+                  <Typography variant='body1' className={classes.content}>
+                    Join a meeting using a special invite link.
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} className={classes.gridItem}>
+                  <TextField
+                    variant='outlined'
+                    required
+                    fullWidth
+                    name='password'
+                    label='Password'
+                    type='password'
+                    id='password'
+                    autoComplete='current-password'
+                  />
+                </Grid>
+                <Grid item xs={12} className={classes.gridItem}>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    disableElevation
+                    fullWidth
+                    size='large'
+                  >
+                    Join a meeting
+                  </Button>
+                </Grid>
+              </Grid>
             </Box>
           </div>
         </Fade>
       </Modal>
 
       <Box>
-        {meetings.map((meeting: IMeeting) => (
-          <MeetingCard meeting={meeting} />
+        {meetings.map((meeting: IMeeting, index) => (
+          <MeetingCard meeting={meeting} key={index} />
         ))}
       </Box>
     </Box>

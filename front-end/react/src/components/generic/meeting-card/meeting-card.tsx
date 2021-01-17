@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: theme.spacing(2),
     },
     icon: {
-      color: theme.palette.text.primary,
+      color: theme.palette.text.secondary,
       marginRight: theme.spacing(1),
     },
     deleteIcon: {
