@@ -46,7 +46,7 @@ export const SignIn = () => {
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [message, setMessage] = useState<string | undefined>(undefined);
+  const [message] = useState<string | undefined>(undefined);
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {

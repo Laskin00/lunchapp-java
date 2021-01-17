@@ -9,7 +9,7 @@ export interface IUser {
   sessionToken: string;
 }
 
-export interface ISignUpResponse {
+export interface IApiResponse {
   message?: string;
   error?: string;
 }
@@ -42,7 +42,7 @@ export const signIn = async (data: ISignInData): Promise<IUser> => {
   return response.data;
 };
 
-export const signUp = async (data: ISignUpData): Promise<ISignUpResponse> => {
+export const signUp = async (data: ISignUpData): Promise<IApiResponse> => {
   const response = await axios.post('/user/register', data);
 
   return response.data;

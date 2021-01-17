@@ -69,9 +69,9 @@ public class MeetingController {
 		Meeting meeting = meetingRepository.findByUuid(uuid);
 		return meetingUserConnectionRepository.getMeetingOwner(meeting);
 	}
-	@DeleteMapping("/delete/{uuid}")
-	private String deleteMeeting(@RequestBody String sessionToken,@PathVariable String uuid){
-		User user = UserController.getUserBySessionTokenInJson(userRepository,sessionToken);
+	@DeleteMapping("/delete/{uuid}/{sessionToken}")
+	private String deleteMeeting(@PathVariable String uuid, @PathVariable String sessionToken){
+		User user = userRepository.findBySessionToken(sessionToken);
 		Meeting meeting = meetingRepository.findByUuid(uuid);
 		if(user == null) {
 			return "Invalid sessionToken.";

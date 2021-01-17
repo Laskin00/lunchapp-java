@@ -58,6 +58,7 @@ export const NavBar = () => {
   const classes = useStyles();
   const darkMode = getDarkModePreference();
   const [user, setUser] = useState<IUser | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -68,6 +69,7 @@ export const NavBar = () => {
 
       setUser(user);
       setIsAuthenticated(isAuthenticated);
+      setIsLoading(false);
     };
 
     awaitAuthentication();
@@ -101,7 +103,7 @@ export const NavBar = () => {
           Lunchapp
         </Link>
 
-        {isAuthenticated ? (
+        {isLoading || isAuthenticated ? (
           <Box display='flex' justifyContent='center' alignItems='center'>
             <IconButton
               edge='start'

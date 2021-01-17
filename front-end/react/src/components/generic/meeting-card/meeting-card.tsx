@@ -1,16 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Avatar,
+  Backdrop,
   Box,
+  Button,
   Card,
   CardContent,
   CardHeader,
+  CircularProgress,
   Collapse,
   createStyles,
   Divider,
+  Fade,
   Grid,
   IconButton,
   makeStyles,
+  Modal,
+  ownerDocument,
   Theme,
   Typography,
 } from '@material-ui/core';
@@ -20,10 +26,13 @@ import EventIcon from '@material-ui/icons/Event';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { red } from '@material-ui/core/colors';
+import * as api from '../../../api/lunchapp';
+import { IUser } from '../../../api/lunchapp';
+import { useAuth } from '../../../hooks/useAuth';
 
 interface IMeetingCardProps {
   meeting: IMeeting;
+  handleRefetchMeetings: () => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -34,7 +43,11 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       marginTop: theme.spacing(6),
       boxShadow: theme.shadows[3],
-      maxWidth: theme.breakpoints.width('md'),
+      overflowWrap: 'break-word',
+
+      [theme.breakpoints.up('sm')]: {
+        width: theme.breakpoints.width('sm'),
+      },
     },
     header: {
       display: 'flex',
@@ -68,7 +81,8 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.secondary,
     },
     avatar: {
-      backgroundColor: red[500],
+      color: theme.palette.error.contrastText,
+      backgroundColor: theme.palette.error.main,
     },
     title: {
       fontSize: '20px',
@@ -101,15 +115,88 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       alignItems: 'center',
     },
+    usersContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    modal: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    wrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      outline: 'none',
+      width: theme.breakpoints.width('sm'),
+      borderRadius: '8px',
+      backgroundColor: theme.palette.background.paper,
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(6, 8),
+      margin: theme.spacing(4),
+    },
   })
 );
 
-export const MeetingCard = ({ meeting }: IMeetingCardProps) => {
+export const MeetingCard = ({
+  meeting,
+  handleRefetchMeetings,
+}: IMeetingCardProps) => {
   const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<IUser>();
+  const [expanded, setExpanded] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [meetingOwner, setMeetingOwner] = useState<IUser>();
+  const [meetingUsers, setMeetingUsers] = useState<IUser[]>([]);
+  const [sessionToken, setSessionToken] = useState<string | null>(null);
 
-  const handleLeaveMeeting = () => {
-    console.log('Open a confirmation modal and leave meeting');
+  const fetchMeetingUsers = async () => {
+    const owner = await api.getMeetingOwner(meeting.id);
+    const users = await api.getMeetingUsers(meeting.id);
+
+    owner && setMeetingOwner(owner);
+    users && setMeetingUsers(users);
+  };
+
+  useEffect(() => {
+    const awaitAuthentication = async () => {
+      const { user } = await useAuth();
+
+      setCurrentUser(user);
+      setSessionToken(user.sessionToken);
+      fetchMeetingUsers();
+      setIsLoading(false);
+    };
+
+    awaitAuthentication();
+  }, []);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleLeaveMeeting = async () => {
+    if (currentUser && sessionToken && meetingOwner) {
+      try {
+        if (meetingOwner.id === currentUser.id) {
+          await api.deleteMeeting(meeting.id, sessionToken);
+        } else {
+          await api.leaveMeeting(meeting.id, sessionToken);
+        }
+
+        handleRefetchMeetings();
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
   const handleExpandClick = () => {
@@ -117,138 +204,180 @@ export const MeetingCard = ({ meeting }: IMeetingCardProps) => {
   };
 
   return (
-    <Card className={classes.card}>
-      <CardHeader
-        avatar={
-          // avatar of whoever created the meeting
-          <Avatar aria-label='recipe' className={classes.avatar}>
-            M
-          </Avatar>
-        }
-        action={
-          <IconButton
-            aria-label='settings'
-            className={classes.deleteIcon}
-            onClick={handleLeaveMeeting}
+    <>
+      {!isLoading && (
+        <Card className={classes.card}>
+          <CardHeader
+            avatar={
+              <Avatar aria-label='recipe' className={classes.avatar}>
+                {meetingOwner && meetingOwner.firstName.charAt(0)}
+              </Avatar>
+            }
+            action={
+              <IconButton
+                aria-label='settings'
+                className={classes.deleteIcon}
+                onClick={handleOpen}
+              >
+                <DeleteForeverIcon />
+              </IconButton>
+            }
+            title={
+              meetingOwner &&
+              meetingOwner.firstName + ' ' + meetingOwner.lastName
+            }
+            subheader='Owner'
+            className={classes.header}
+            classes={{
+              title: classes.title,
+              subheader: classes.subheader,
+              action: classes.action,
+            }}
+          />
+
+          <Modal
+            aria-labelledby='transition-modal-title'
+            aria-describedby='transition-modal-description'
+            className={classes.modal}
+            open={open}
+            onClose={handleClose}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+              timeout: 500,
+            }}
           >
-            <DeleteForeverIcon />
-          </IconButton>
-        }
-        title='Martin Todorov'
-        subheader='Owner'
-        className={classes.header}
-        classes={{
-          title: classes.title,
-          subheader: classes.subheader,
-          action: classes.action,
-        }}
-      />
+            <Fade in={open}>
+              <div className={classes.wrapper}>
+                <Typography
+                  variant='h4'
+                  align='center'
+                  className={classes.title}
+                >
+                  {`Are you sure you want to ${
+                    meetingOwner &&
+                    currentUser &&
+                    meetingOwner.id === currentUser.id
+                      ? 'delete'
+                      : 'leave'
+                  } this meeting?`}
+                </Typography>
 
-      <CardContent>
-        <Typography
-          component='p'
-          variant='body1'
-          className={classes.description}
-        >
-          {meeting.description}
-        </Typography>
+                <Grid container spacing={4} style={{ marginTop: '1rem' }}>
+                  <Grid item xs={6}>
+                    <Button
+                      variant='contained'
+                      color='default'
+                      disableElevation
+                      fullWidth
+                      size='large'
+                      onClick={handleClose}
+                    >
+                      Cancel
+                    </Button>
+                  </Grid>
 
-        <Divider className={classes.divider} />
+                  <Grid item xs={6}>
+                    <Button
+                      variant='contained'
+                      color='primary'
+                      disableElevation
+                      fullWidth
+                      size='large'
+                      onClick={handleLeaveMeeting}
+                    >
+                      Confirm
+                    </Button>
+                  </Grid>
+                </Grid>
+              </div>
+            </Fade>
+          </Modal>
 
-        <Grid container spacing={2}>
-          <Grid item xs={4} className={classes.dataRow}>
-            <LocationOnIcon className={classes.icon} />
-            <Typography variant='body2' className={classes.information}>
-              {meeting.location}
+          <CardContent>
+            <Typography
+              component='p'
+              variant='body1'
+              className={classes.description}
+            >
+              {meeting.description}
             </Typography>
-          </Grid>
 
-          <Grid item xs={4} className={classes.dataRow}>
-            <EventIcon className={classes.icon} />
-            <Typography variant='body2' className={classes.information}>
-              {meeting.date}
-            </Typography>
-          </Grid>
+            <Divider className={classes.divider} />
 
-          <Grid item xs={4} className={classes.dataRow}>
-            <AccessTimeIcon className={classes.icon} />
-            <Typography variant='body2' className={classes.information}>
-              {meeting.time}
-            </Typography>
-          </Grid>
-        </Grid>
+            <Grid container spacing={2}>
+              <Grid item xs={4} className={classes.dataRow}>
+                <LocationOnIcon className={classes.icon} />
+                <Typography variant='body2' className={classes.information}>
+                  {meeting.location}
+                </Typography>
+              </Grid>
 
-        <Divider className={classes.divider} />
+              <Grid item xs={4} className={classes.dataRow}>
+                <EventIcon className={classes.icon} />
+                <Typography variant='body2' className={classes.information}>
+                  {meeting.date}
+                </Typography>
+              </Grid>
 
-        <Box display='flex' justifyContent='center' alignItems='center'>
-          <Typography className={classes.information} variant='body1'>
-            View meeting participants
-          </Typography>
-          <IconButton
-            className={`${classes.expand} ${expanded && classes.expandOpen}`}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label='show more'
-          >
-            <ExpandMoreIcon />
-          </IconButton>
-        </Box>
-      </CardContent>
-
-      <Collapse in={expanded} timeout='auto' unmountOnExit>
-        <CardContent>
-          <Grid container spacing={2}>
-            <Grid item xs={3} className={classes.userContainer}>
-              <Avatar aria-label='recipe' className={classes.avatar}>
-                M
-              </Avatar>
-              <Typography
-                style={{ marginTop: '0.5rem' }}
-                className={classes.information}
-                variant='body1'
-              >
-                Mile Kitic
-              </Typography>
+              <Grid item xs={4} className={classes.dataRow}>
+                <AccessTimeIcon className={classes.icon} />
+                <Typography variant='body2' className={classes.information}>
+                  {meeting.time}
+                </Typography>
+              </Grid>
             </Grid>
-            <Grid item xs={3} className={classes.userContainer}>
-              <Avatar aria-label='recipe' className={classes.avatar}>
-                I
-              </Avatar>
-              <Typography
-                style={{ marginTop: '0.5rem' }}
-                className={classes.information}
-                variant='body1'
-              >
-                Ilian
+
+            <Divider className={classes.divider} />
+
+            <Box display='flex' justifyContent='center' alignItems='center'>
+              <Typography className={classes.information} variant='body1'>
+                View meeting participants
               </Typography>
-            </Grid>
-            <Grid item xs={3} className={classes.userContainer}>
-              <Avatar aria-label='recipe' className={classes.avatar}>
-                L
-              </Avatar>
-              <Typography
-                style={{ marginTop: '0.5rem' }}
-                className={classes.information}
-                variant='body1'
+              <IconButton
+                className={`${classes.expand} ${
+                  expanded && classes.expandOpen
+                }`}
+                onClick={handleExpandClick}
+                aria-expanded={expanded}
+                aria-label='show more'
               >
-                Lorena
-              </Typography>
-            </Grid>
-            <Grid item xs={3} className={classes.userContainer}>
-              <Avatar aria-label='recipe' className={classes.avatar}>
-                F
-              </Avatar>
-              <Typography
-                style={{ marginTop: '0.5rem' }}
-                className={classes.information}
-                variant='body1'
-              >
-                Fiki
-              </Typography>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Collapse>
-    </Card>
+                <ExpandMoreIcon />
+              </IconButton>
+            </Box>
+          </CardContent>
+
+          <Collapse in={expanded} timeout='auto' unmountOnExit>
+            <CardContent>
+              <Grid container spacing={2} className={classes.usersContainer}>
+                {meetingUsers.map((user: IUser, index) => (
+                  <Grid
+                    item
+                    xs={3}
+                    key={index}
+                    className={classes.userContainer}
+                  >
+                    <Avatar
+                      aria-label='recipe'
+                      variant='rounded'
+                      className={classes.avatar}
+                    >
+                      {user.firstName.charAt(0)}
+                    </Avatar>
+                    <Typography
+                      style={{ marginTop: '0.5rem' }}
+                      className={classes.information}
+                      variant='body1'
+                    >
+                      {user.firstName} {user.lastName}
+                    </Typography>
+                  </Grid>
+                ))}
+              </Grid>
+            </CardContent>
+          </Collapse>
+        </Card>
+      )}
+    </>
   );
 };

@@ -101,9 +101,9 @@ public class UserController {
 		return getUserBySessionTokenInJson(userRepository,sessionToken);
 	}
 	
-	@GetMapping("/meetings")
-	private List<Meeting> getAllMeetingsOfAUser(@RequestBody String sessionTokenJson){
-		User user = getUserBySessionTokenInJson(userRepository,sessionTokenJson);
+	@GetMapping("/meetings/{sessionToken}")
+	private List<Meeting> getAllMeetingsOfAUser(@PathVariable String sessionToken){
+		User user = userRepository.findBySessionToken(sessionToken);
 		List<Meeting> meetings = meetingUserConnectionRepository.getMeetingsOfUser(user);
 		return meetings;
 		
