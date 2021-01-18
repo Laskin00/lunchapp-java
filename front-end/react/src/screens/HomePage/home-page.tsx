@@ -177,6 +177,7 @@ export const HomePage = () => {
       if (response.message) {
         setMessage(response.message);
         setError(undefined);
+        setMeetingCode('');
 
         fetchMeetings(sessionToken);
       } else {

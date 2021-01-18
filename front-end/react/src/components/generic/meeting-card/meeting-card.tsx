@@ -138,6 +138,11 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(6, 8),
       margin: theme.spacing(4),
     },
+    modalTitle: {
+      fontSize: '20px',
+      fontWeight: 500,
+      color: theme.palette.text.primary,
+    },
   })
 );
 
@@ -253,7 +258,7 @@ export const MeetingCard = ({
                 <Typography
                   variant='h4'
                   align='center'
-                  className={classes.title}
+                  className={classes.modalTitle}
                 >
                   {`Are you sure you want to ${
                     meetingOwner &&
