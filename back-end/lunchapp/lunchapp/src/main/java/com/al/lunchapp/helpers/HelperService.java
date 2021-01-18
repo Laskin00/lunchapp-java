@@ -22,7 +22,7 @@ public class HelperService {
 	}
 	
 	public static String valueOfARepresentingKeyInJsonString(String key, String json) {
-		String[] temp = json.replaceAll("\\{|\\}|\\s|", "").split(",");
+		String[] temp = json.replaceAll("\\{|\\}", "").split(",");
 		for(int i = 0; i < temp.length; i++){
 			String[] currentKeyValue = temp[i].split("\":\"");
 			if(key.equals(currentKeyValue[0].replaceAll("\"",""))){
