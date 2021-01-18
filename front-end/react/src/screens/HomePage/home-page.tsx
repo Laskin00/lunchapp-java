@@ -176,9 +176,11 @@ export const HomePage = () => {
 
       if (response.message) {
         setMessage(response.message);
+        setError(undefined);
 
         fetchMeetings(sessionToken);
       } else {
+        setMessage(undefined);
         setError('Failed to join meeting.');
       }
       setOpenSnackbar(true);

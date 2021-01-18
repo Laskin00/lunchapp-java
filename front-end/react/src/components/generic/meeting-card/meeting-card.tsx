@@ -192,6 +192,7 @@ export const MeetingCard = ({
           await api.leaveMeeting(meeting.id, sessionToken);
         }
 
+        handleClose();
         handleRefetchMeetings();
       } catch (error) {
         console.log(error);

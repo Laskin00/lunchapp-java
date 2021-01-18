@@ -30,8 +30,6 @@ export interface IMeetingInviteTokenResponse {
 export const createMeeting = async (
   data: IMeetingData
 ): Promise<IMeetingResponse> => {
-  console.log(data);
-
   const response = await axios.post('/meeting/create', data);
 
   return response.data;

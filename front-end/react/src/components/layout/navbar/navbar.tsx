@@ -144,9 +144,6 @@ export const NavBar = () => {
               open={open}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose} component={Link} to='/profile'>
-                Profile
-              </MenuItem>
               <MenuItem onClick={handleLogout} component={Link} to='/signin'>
                 Sign Out
               </MenuItem>
